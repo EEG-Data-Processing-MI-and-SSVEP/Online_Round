@@ -1,0 +1,6 @@
+MI
+SSVEP
+train.csv
+validation.csv
+test.csv
+sample_submission.csv
