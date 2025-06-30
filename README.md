@@ -58,7 +58,6 @@ pip install -r requirements.txt
 ```bash
 python train.py \
     --task MI \
-    --config configs/mi_config.yaml \
     --data_dir data/raw \
     --output_dir checkpoints/
 ```
