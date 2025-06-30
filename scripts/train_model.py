@@ -46,7 +46,7 @@ def main(args):
         val_dataset = MI_dataset.MIDataset(train_csv_path, task='MI')
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-        model = MI_model_arch.MIPipeline(num_classes=2).to(device)
+        model = MI_model_arch.MIPipeline(eeg_channels=2, motion_channels=6, num_classes=2).to(device)
 
     elif task.lower() == "ssvep":
         print("Running SSVEP training")
