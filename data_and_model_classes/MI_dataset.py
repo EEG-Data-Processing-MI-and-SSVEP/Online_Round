@@ -18,7 +18,7 @@ sys.path.append(parent_dir)
 base_directory_path = os.getenv('BASE_DIR_PATH')
 load_dotenv()
 
-class EEGDataset(Dataset):
+class MIDataset(Dataset):
     
     base_path = os.getenv('BASE_DIR_PATH')
     label_encoding = {'Left': 0, 'Right': 1}
@@ -29,7 +29,7 @@ class EEGDataset(Dataset):
     acc_scale   = 0.000598  # g per LSB
     acc_offset  = 0
 
-    def __init__(self, csv_path, task=None, segment_length=250, overlap=0.5):
+    def __init__(self, csv_path, task='MI', segment_length=250, overlap=0.5):
         self.metadata = pd.read_csv(csv_path)
         self.task = task
 

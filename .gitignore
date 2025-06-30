@@ -5,3 +5,6 @@ validation.csv
 test.csv
 sample_submission.csv
 .env
+notebook.ipynb
+sublementary*.ipynb
+*.zip

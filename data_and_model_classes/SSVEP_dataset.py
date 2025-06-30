@@ -14,9 +14,6 @@ parent_dir = os.path.abspath(os.path.join(current_file_dir, '..'))
 # Add the parent directory to Python path
 sys.path.append(parent_dir)
 
-# Get the base directory path for being able to read .env file which is in the parent directory
-base_directory_path = os.getenv('BASE_DIR_PATH')
-
 class SSVEPDataset(Dataset):
     """Enhanced SSVEP dataset loader with frequency feature extraction"""
     
@@ -39,7 +36,7 @@ class SSVEPDataset(Dataset):
         # Load the .env file
         load_dotenv()
 
-        self.base_path = os.getenv('BASE_DIR_PATH')
+        self.base_path = os.getenv('DATA_BASE_DIR')
         self.metadata = pd.read_csv(csv_path)
         self.eeg_reference = eeg_reference
         self.transform = transform
