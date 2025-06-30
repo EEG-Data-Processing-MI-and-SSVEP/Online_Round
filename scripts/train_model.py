@@ -64,7 +64,7 @@ def main(args):
     optimizer = optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50)
 
-    history, best_model_path = train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, num_epochs=num_epochs)
+    history, best_model_path = train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, task=task, num_epochs=num_epochs)
     plot_training_history(history)
     print(f"Best Model Saved at: {best_model_path}")
 

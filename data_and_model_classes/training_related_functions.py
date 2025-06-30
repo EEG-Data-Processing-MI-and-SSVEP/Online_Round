@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, num_epochs=50, device='cuda'):
+def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, task, num_epochs=50, device='cuda'):
     """Enhanced training loop with comprehensive metrics tracking"""
     
     history = {
@@ -101,7 +101,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
             else:
                 best_loss = val_loss
                 
-            best_model_path = f'ssvep_model_epoch{epoch+1}_f1{val_f1:.4f}_loss{val_loss:.4f}.pth'
+            best_model_path = f'mtc-best-weights/{task}_model_epoch{epoch+1}_f1{val_f1:.4f}_loss{val_loss:.4f}.pth'
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
