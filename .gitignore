@@ -5,3 +5,4 @@ validation.csv
 test.csv
 sample_submission.csv
 .env
+*.ipynb
