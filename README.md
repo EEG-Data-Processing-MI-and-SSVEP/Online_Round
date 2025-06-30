@@ -5,93 +5,91 @@ End-to-end pipeline for Motor Imagery (MI) and Steady-State Visual Evoked Potent
 ## Table of Contents
 - [Repository Structure](#repository-structure)
 - [Requirements](#requirements)
-- [Quick Start](#quick-start)
-  - [Motor Imagery Classification](#1-motor-imagery-mi-classification)
-  - [SSVEP Classification](#2-ssvep-classification)
-- [Model Architectures](#model-architectures)
-  - [MI Model](#1-motor-imagery-pipeline-modelsmi_modelpy)
-  - [SSVEP Model](#2-ssvep-model-modelsssvep_modelpy)
-- [Data Processing](#data-processing)
-- [Training Pipeline](#training-pipeline)
-- [Evaluation Metrics](#evaluation-metrics)
 - [Reproducibility](#reproducibility)
-- [License](#license)
+- [Model Architectures](#model-architectures)
+- [Data Processing](#data-processing)
 
 ## Repository Structure
 ```
-├── checkpoints/ # Pre-trained model checkpoints
-│ ├── mi_model.pth # Motor Imagery model
-│ └── ssvep_model.pth # SSVEP model
-│
-├── configs/ # Configuration files
-│ ├── mi_config.yaml # MI training/inference config
-│ └── ssvep_config.yaml # SSVEP training/inference config
-│
-├── data/ # Data directory
-│ ├── raw/ # Raw data files
-│ └── processed/ # Processed data
-│
-├── models/ # Model architectures
-│ ├── mi_model.py # MI classification model
-│ └── ssvep_model.py # SSVEP classification model
-│
-├── scripts/ # Utility scripts
-│ ├── preprocessing/ # Data preprocessing
-│ ├── training/ # Training scripts
-│ └── evaluation/ # Evaluation metrics
-│
-├── requirements.txt # Python dependencies
-├── train.py # Main training script
-├── predict.py # Main inference script
-└── README.md # This file
+.
+├── data_and_model_classes/
+│   ├── MI_dataset.py
+│   ├── MI_model_arch.py
+│   ├── SSVEP_dataset.py
+│   ├── SSVEP_model_arch.py
+│   └── training_related_functions.py
+|
+├── mtc-best-weights/
+│   ├── mi_model_42.pth
+│   ├── ssvep_model_epoch15_f10.6090_loss1.0770.pth
+│   └── submission.csv
+|
+├── scripts/
+│   ├── create_csv_submission.py
+│   └── train_model.py
+|
+├── newly_created_submissions/     # created submissions from running scripts/create_csv_submission.py
+|
+├── README_Data.md
+├── README.md
+├── requirements.txt
+
 ```
 ## Requirements
 For installing requirements
 ```bash
 pip install -r requirements.txt
 ```
-
-## Quick Start
-### 1. Motor Imagery (MI) Classification
-
-#### Training:
+## Reproducibility:
+To Reproduce our work, do the following:
+#### 1. Clone the Repository:
 ```bash
-python train.py \
-    --task MI \
-    --data_dir data/raw \
-    --output_dir checkpoints/
+git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round
 ```
-
-#### Inference:
+#### 2. Create the `.env` file:
 ```bash
-python predict.py \
-    --task MI \
-    --checkpoint checkpoints/mi_model.pt \
-    --input data/test_samples.csv \
-    --output predictions.json
+mv .env.example .env
 ```
-
-### 2. SSVEP Classification
-
-#### Training:
+#### 3. update the `DATA_BASE_DIR` variable in the `.env`:
 ```bash
-python train.py \
-    --task SSVEP \
-    --config configs/ssvep_config.yaml \
-    --data_dir data/raw \
-    --output_dir checkpoints/
+DATA_BASE_PATH=<your_data_path>
 ```
-#### Inference:
+#### 4. Running scripts you want:
+##### 1. For training:
+> best  weights are saved under `mtc_best_weights/` directory.
 ```bash
-python predict.py \
-    --task SSVEP \
-    --checkpoint checkpoints/ssvep_model.pt \
-    --input data/test_samples.csv \
-    --output predictions.json
+python scripts/train_model.py \
+    --task "MI" \
+    --num_epochs 100 \
+    --batch_size 64 \
+    --train_csv "<data_path_in_.env>/train.csv"
+    --validation_csv "<data_path_in_.env>/validation.csv"
+```
+##### 2. For generating a submission:
+> created `.csv` file is saved under `newly_created_submissions/` directory.
+```bash
+python scripts/create_csv_submission.py \
+    --mi_checkpoint_path "<path_to_.pth_of_best_mi_wights>"\
+    --ssvep_checkpoint_path "<path_to_.pth_of_best_ssvep_wights>"\
+    --test_set_csv_path "<data_path_in_.env>/test.csv"
 ```
 
 ## Model Architectures
-### 1. Motor Imagery Pipeline (`models/mi_model.py`)
+<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
+  <div style="text-align: center; flex: 1; border-right: 1px solid #ddd; padding-right: 20px;">
+    <h3>MI Model Architecture</h3>
+    <img src="images/mi_model_diagram.png" style="max-width: 100%; height: auto;">
+  </div>
+  
+  <div style="text-align: center; flex: 1;">
+    <h3>SSVEP Model Architecture</h3>
+    <img src="images/ssvep_model_diagram.png" style="max-width: 100%; height: auto;">
+  </div>
+</div>
+
+### 1. Motor Imagery
+Under `data_and_model_classes/MI_model_arch.py`
+
 
 #### Components:
 ```python
@@ -115,7 +113,8 @@ class EEGPipeline(nn.Module):
     # Combines denoiser and classifier
 ```
 
-### 2. SSVEP Model (`models/ssvep_model.py`)
+### 2. SSVEP Model 
+Under `data_and_model_classes/SSVEP_model_arch.py`
 
 #### Components:
 ```python
@@ -137,7 +136,7 @@ class AttentionPooling(nn.Module):
     # Implements attention-based pooling
 ```
 
-## Data Processing Pipeline:
+## Data Processing:
 ### SSVEP Data Processing
 
 #### Processing Pipeline
@@ -210,9 +209,9 @@ class SSVEPDataset(Dataset):
     - **Temporal Window:** 2-6s (1000 samples)
 
 
-### Implementation (EEGDataset class)
+### Implementation (MIDataset class)
 ```python
-class EEGDataset(Dataset):
+class MIDataset(Dataset):
     label_encoding = {'Left': 0, 'Right': 1}
     
     def __getitem__(self, idx):
@@ -232,32 +231,18 @@ class EEGDataset(Dataset):
 ```
 
 ### Key Differences Between Modalities
-Feature	SSVEP	Motor Imagery
-Channels	PO7, OZ, PO8	C3, C4
-Filtering	6-30Hz + 50Hz notch	8-30Hz only
-Reference	Average reference	CAR (CZ/PZ)
-Window	Full trial (1750 samples)	2-6s (1000 samples)
-Features	Frequency band power	Raw time-series
-Classes	4 directions	2 classes (Left/Right)
-Common Processing Elements
+| Feature                      | SSVEP                     | Motor Imagery             |
+|------------------------------|---------------------------|---------------------------|
+| Channels                     | PO7, OZ, PO8              | C3, C4                    |
+| Filtering                    | 6-30Hz + 50Hz notch       | 8-30Hz only               |
+| Reference                    | Average reference         | CAR (CZ/PZ)               |
+| Window                       | Full trial (1750 samples) | 2-6s (1000 samples)       |
+| Features                     | Frequency band power      | Raw time-series           |
+| Classes                      | 4 directions (Left/Right/Backward/Forward)              | 2 classes (Left/Right)    |
 
-    Normalization: Both use channel-wise z-score normalization
+### Common Processing Elements
 
-    Motion Data: Both process accelerometer and gyroscope data
-
-    Sampling Rate: 250Hz for both modalities
-
-    PyTorch Integration: Both return ready-to-use tensors
-
-Usage Example
-python
-
-# SSVEP Dataset
-ssvep_dataset = SSVEPDataset(csv_path="metadata.csv")
-ssvep_loader = DataLoader(ssvep_dataset, batch_size=32)
-
-# MI Dataset
-mi_dataset = EEGDataset(csv_path="metadata.csv", task="MI")
-mi_loader = DataLoader(mi_dataset, batch_size=32)
-
-This documentation reflects the exact processing pipeline implemented in your code, with clear specifications of all parameters and processing steps for both SSVEP and Motor Imagery classification tasks.
+- **Normalization**: Both use channel-wise z-score normalization  
+- **Motion Data**: Both process accelerometer and gyroscope data  
+- **Sampling Rate**: 250Hz for both modalities  
+- **PyTorch Integration**: Both return ready-to-use tensors  
