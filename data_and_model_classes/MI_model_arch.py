@@ -121,7 +121,7 @@ class SpatialAttentionClassifier(nn.Module):
         # Classify
         return self.classifier(features)
 
-class EEGPipeline(nn.Module):
+class MIPipeline(nn.Module):
     """Simplified end-to-end pipeline"""
     def __init__(self, eeg_channels=7, motion_channels=6, num_classes=4):
         super().__init__()
