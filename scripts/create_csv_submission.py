@@ -74,7 +74,7 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
     
     # Create submission dataframe
     load_dotenv()
-    submission_df = pd.read_csv(f"{os.getenv('BASE_DIR_PATH')}/sample_submission.csv")
+    submission_df = pd.read_csv(f"{os.getenv('DATA_BASE_DIR')}/sample_submission.csv")
     
     # Fill in predictions in order of submission file
     for idx in submission_df['id']:
@@ -82,13 +82,13 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
 
     
     # Save submission
-    created_submission_path = f"{os.getenv('BASE_DIR_PATH')}/created_submissions/submission.csv"
+    created_submission_path = f"created_submissions/submission.csv"
     submission_df.to_csv(created_submission_path, index=False)
     print(f"Submission file created: submission.csv at {created_submission_path}")
     print(f"Total predictions made: {len(predictions)} (should be 100)")
     
     # Verify we have predictions for all test samples
-    test_df = pd.read_csv(f"{os.getenv('BASE_DIR_PATH')}/test.csv")
+    test_df = pd.read_csv(f"{os.getenv('DATA_BASE_DIR')}/test.csv")
     missing = set(test_df['id']) - set(predictions.keys())
     if missing:
         print(f"Warning: Missing predictions for IDs: {sorted(missing)}")
