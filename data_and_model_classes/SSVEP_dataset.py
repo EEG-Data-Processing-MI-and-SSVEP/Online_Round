@@ -25,7 +25,7 @@ class SSVEPDataset(Dataset):
         'Backward': 8
     }
     
-    def __init__(self, csv_path, task='SSVEP', eeg_reference='average', transform=None):
+    def __init__(self, csv_path, task='SSVEP', type='Train', eeg_reference='average', transform=None):
         """
         Args:
             csv_path: Path to metadata CSV
@@ -40,7 +40,7 @@ class SSVEPDataset(Dataset):
         self.metadata = pd.read_csv(csv_path)
         self.eeg_reference = eeg_reference
         self.transform = transform
-        
+        self.type = type
         if task:
             self.metadata = self.metadata[self.metadata['task'] == task]
             
@@ -151,10 +151,12 @@ class SSVEPDataset(Dataset):
         # Convert to tensors
         eeg_tensor = torch.from_numpy(eeg_normalized)
         freq_tensor = torch.from_numpy(freq_features)
-        motion_tensor = torch.from_numpy(motion_normalized)
-        label_tensor = torch.tensor(self.label_encoding[row['label']], dtype=torch.long)
-        
+        motion_tensor = torch.from_numpy(motion_normalized)    
         if self.transform:
             eeg_tensor = self.transform(eeg_tensor)
-            
-        return eeg_tensor, freq_tensor, motion_tensor, label_tensor
+
+        if self.type.lower() == 'test':
+            return eeg_tensor, freq_tensor, motion_tensor
+        else:
+            label_tensor = torch.tensor(self.label_encoding[row['label']], dtype=torch.long)
+            return eeg_tensor, freq_tensor, motion_tensor, label_tensor
