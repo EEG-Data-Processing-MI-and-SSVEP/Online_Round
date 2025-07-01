@@ -14,6 +14,9 @@ parent_dir = os.path.abspath(os.path.join(current_file_dir, '..'))
 # Add the parent directory to Python path
 sys.path.append(parent_dir)
 
+env_path = os.path.join(parent_dir, '.env')
+load_dotenv(env_path)
+
 class SSVEPDataset(Dataset):
     """Enhanced SSVEP dataset loader with frequency feature extraction"""
     
@@ -33,8 +36,6 @@ class SSVEPDataset(Dataset):
             eeg_reference: Reference method for EEG
             transform: Optional transforms to be applied
         """
-        # Load the .env file
-        load_dotenv()
 
         self.base_path = os.getenv('DATA_BASE_DIR')
         self.metadata = pd.read_csv(csv_path)
@@ -156,7 +157,7 @@ class SSVEPDataset(Dataset):
             eeg_tensor = self.transform(eeg_tensor)
 
         if self.type.lower() == 'test':
-            return eeg_tensor, freq_tensor, motion_tensor
+            return eeg_tensor, freq_tensor, motion_tensor, row['id']
         else:
             label_tensor = torch.tensor(self.label_encoding[row['label']], dtype=torch.long)
             return eeg_tensor, freq_tensor, motion_tensor, label_tensor

@@ -27,8 +27,8 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
     print(f"Using {device} device")
     
     # Load test data separately for MI and SSVEP
-    test_mi_dataset = MI_dataset.MIDataset(test_csv_path, task='MI')
-    test_ssvep_dataset = SSVEP_dataset.SSVEPDataset(test_csv_path, task='SSVEP')
+    test_mi_dataset = MI_dataset.MIDataset(test_csv_path, task='MI', type='Test')
+    test_ssvep_dataset = SSVEP_dataset.SSVEPDataset(test_csv_path, task='SSVEP', type='Test')
     
     test_mi_loader = DataLoader(test_mi_dataset, batch_size=16, shuffle=False)
     test_ssvep_loader = DataLoader(test_ssvep_dataset, batch_size=16, shuffle=False)
