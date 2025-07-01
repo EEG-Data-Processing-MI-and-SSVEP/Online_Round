@@ -4,7 +4,6 @@ End-to-end pipeline for Motor Imagery (MI) and Steady-State Visual Evoked Potent
 
 ## Table of Contents
 - [Repository Structure](#repository-structure)
-- [Requirements](#requirements)
 - [Reproducibility](#reproducibility)
 - [Model Architectures](#model-architectures)
 - [Data Processing](#data-processing)
@@ -47,7 +46,7 @@ git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round MTC-I
 ```
 #### 3. Create the `.env` file:
 ```bash
-mv .env.example .env && source .env
+mv .env.example .env
 ```
 #### 4. update the `DATA_BASE_DIR` variable in the `.env`:
 ```bash
