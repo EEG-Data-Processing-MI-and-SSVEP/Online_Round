@@ -64,16 +64,16 @@ python scripts/train_model.py \
     --task "MI" \
     --num_epochs 100 \
     --batch_size 64 \
-    --train_csv "<data_path_in_.env>/train.csv"
-    --validation_csv "<data_path_in_.env>/validation.csv"
+    --train_csv $DATA_BASE_DIR/train.csv
+    --validation_csv $DATA_BASE_DIR/validation.csv
 ```
 ##### 2. For generating a submission:
 > created `.csv` file is saved under `newly_created_submissions/` directory.
 ```bash
 python scripts/create_csv_submission.py \
-    --mi_checkpoint_path "<path_to_.pth_of_best_mi_wights>"\
-    --ssvep_checkpoint_path "<path_to_.pth_of_best_ssvep_wights>"\
-    --test_set_csv_path "<data_path_in_.env>/test.csv"
+    --mi_checkpoint_path "mtc_best_weights<path_to_.pth_of_best_mi_wights>"\
+    --ssvep_checkpoint_path "mtc_best_weights/<path_to_.pth_of_best_ssvep_wights>"\
+    --test_set_csv_path $DATA_BASE_DIR/test.csv
 ```
 
 ## Model Architectures
