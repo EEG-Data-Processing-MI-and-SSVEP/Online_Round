@@ -44,7 +44,8 @@ pip install -r requirements.txt
 To Reproduce our work, do the following:
 #### 1. Clone the Repository:
 ```bash
-git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round
+git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round MTC-IAC
+cd MTC-AIC
 ```
 #### 2. Create the `.env` file:
 ```bash
