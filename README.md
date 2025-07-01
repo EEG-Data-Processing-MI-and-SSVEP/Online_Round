@@ -35,27 +35,29 @@ End-to-end pipeline for Motor Imagery (MI) and Steady-State Visual Evoked Potent
 ├── requirements.txt
 
 ```
-## Requirements
-For installing requirements
+## Reproducibility:
+To Reproduce our work, do the following:
+#### 1. Installing Requirements:
 ```bash
 pip install -r requirements.txt
 ```
-## Reproducibility:
-To Reproduce our work, do the following:
-#### 1. Clone the Repository:
+#### 2. Clone the Repository:
 ```bash
-git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round MTC-IAC
-cd MTC-AIC
+git clone https://github.com/EEG-Data-Processing-MI-and-SSVEP/Online_Round MTC-IAC && cd MTC-AIC
 ```
-#### 2. Create the `.env` file:
+#### 3. Create the `.env` file:
 ```bash
-mv .env.example .env
+mv .env.example .env && source .env
 ```
-#### 3. update the `DATA_BASE_DIR` variable in the `.env`:
+#### 4. update the `DATA_BASE_DIR` variable in the `.env`:
 ```bash
 DATA_BASE_PATH=<your_data_path>
 ```
-#### 4. Running scripts you want:
+#### 5. Define the `.env` variable `$DATA_BASE_DIR` as shell variable:
+```bash
+source .env
+```
+#### 6. Running scripts you want:
 ##### 1. For training:
 > best  weights are saved under `mtc_best_weights/` directory.
 ```bash

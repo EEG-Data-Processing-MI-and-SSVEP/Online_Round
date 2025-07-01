@@ -27,8 +27,8 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
     print(f"Using {device} device")
     
     # Load test data separately for MI and SSVEP
-    test_mi_dataset = MI_dataset.MIDataset(test_csv_path, task='MI')
-    test_ssvep_dataset = SSVEP_dataset.SSVEPDataset(test_csv_path, task='SSVEP')
+    test_mi_dataset = MI_dataset.MIDataset(test_csv_path, task='MI', type='Test')
+    test_ssvep_dataset = SSVEP_dataset.SSVEPDataset(test_csv_path, task='SSVEP', type='Test')
     
     test_mi_loader = DataLoader(test_mi_dataset, batch_size=16, shuffle=False)
     test_ssvep_loader = DataLoader(test_ssvep_dataset, batch_size=16, shuffle=False)
@@ -50,7 +50,7 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
     
     # Process MI test data
     with torch.no_grad():
-        for eeg, motion, _, ids in test_mi_loader:
+        for eeg, motion, ids in test_mi_loader:
             eeg    = eeg.permute(0, 2, 1).to(device)
             motion = motion.permute(0, 2, 1).to(device)
             outputs = mi_model(eeg, motion)
@@ -61,7 +61,7 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
     
     # Process SSVEP test data
     with torch.no_grad():
-        for eeg, freq, motion, _, ids in test_ssvep_loader:
+        for eeg, freq, motion, ids in test_ssvep_loader:
             eeg = eeg.to(device)
             freq = freq.to(device)
             motion = motion.to(device)
@@ -82,7 +82,7 @@ def create_submission(test_csv_path, mi_model, ssvep_model):
 
     
     # Save submission
-    created_submission_path = f"created_submissions/submission.csv"
+    created_submission_path = f"newly_created_submissions/submission.csv"
     submission_df.to_csv(created_submission_path, index=False)
     print(f"Submission file created: submission.csv at {created_submission_path}")
     print(f"Total predictions made: {len(predictions)} (should be 100)")

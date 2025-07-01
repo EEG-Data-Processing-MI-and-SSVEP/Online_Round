@@ -14,14 +14,13 @@ parent_dir = os.path.abspath(os.path.join(current_file_dir, '..'))
 # Add the parent directory to Python path
 sys.path.append(parent_dir)
 
-# Get the base directory path for being able to read .env file which is in the parent directory
-base_directory_path = os.getenv('BASE_DIR_PATH')
-load_dotenv()
+env_path = os.path.join(parent_dir, '.env')
+load_dotenv(env_path)
+
 
 class MIDataset(Dataset):
+    # Get the base directory path for being able to read .env file which is in the parent directory
     
-    base_path = os.getenv('BASE_DIR_PATH')
-    label_encoding = {'Left': 0, 'Right': 1}
 
     # Sensitivity values (replace with your device's actual values if different)
     gyro_scale  = 0.02  # deg/s per LSB
@@ -29,9 +28,15 @@ class MIDataset(Dataset):
     acc_scale   = 0.000598  # g per LSB
     acc_offset  = 0
 
-    def __init__(self, csv_path, task='MI', segment_length=250, overlap=0.5):
+    def __init__(self, csv_path, task='MI', type='train', segment_length=250, overlap=0.5):
+
+        self.base_path = os.getenv('DATA_BASE_DIR')
+        if not self.base_path:
+            raise ValueError("DATA_BASE_DIR not set in .env file")
+        self.label_encoding = {'Left': 0, 'Right': 1}
         self.metadata = pd.read_csv(csv_path)
         self.task = task
+        self.type = type
 
         if self.task:
             self.metadata = self.metadata[self.metadata['task'] == self.task]
@@ -80,7 +85,7 @@ class MIDataset(Dataset):
             dataset = 'validation'
         else:
             dataset = 'test'
-
+  
         eeg_path = f"{self.base_path}/{row['task']}/{dataset}/{row['subject_id']}/{row['trial_session']}/EEGdata.csv"
         eeg_data = pd.read_csv(eeg_path)
         trial_num = int(row['trial'])
@@ -139,7 +144,9 @@ class MIDataset(Dataset):
         # Combine motion data
         motion_values = np.concatenate([acc_values, gyro_values], axis=0)  # (6, 750)
         motion_tensor = torch.from_numpy(motion_values.astype(np.float32)).transpose(0, 1)  # (750, 6)
+        if self.type.lower() == 'test':
+            return eeg_tensor, motion_tensor, row['id']
+        else:
+            label_tensor = torch.tensor(self.label_encoding[row['label']], dtype=torch.long)
 
-        label_tensor = torch.tensor(self.label_encoding[row['label']], dtype=torch.long)
-
-        return eeg_tensor, motion_tensor, label_tensor
+            return eeg_tensor, motion_tensor, label_tensor
